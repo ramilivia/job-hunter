@@ -8,6 +8,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from fastapi import APIRouter, Query
 from jobspy import scrape_jobs
 
+from .common import json_safe_jobs
 from .config import DEFAULT_POSITIONS, DEFAULT_COUNTRY_NAMES, DEFAULT_HOURS, DEFAULT_LIMIT
 
 router = APIRouter()
@@ -24,9 +25,10 @@ def scrape_one(site: str, position: str, country: str, results_wanted: int, hour
             location=country,
             results_wanted=results_wanted,
             hours_old=hours_old,
-            country_indeed=country,
+            country_indeed=country if site in ("indeed", "glassdoor") else None,
             is_remote=is_remote,
-            linkedin_fetch_description=True
+            linkedin_fetch_description=True,
+            retry=True,
         )
         jobs["search_position"] = position
         jobs["search_country"] = country
@@ -70,14 +72,13 @@ def run_scrape(site: str, positions: str, countries: str, results_wanted: int, h
     combined = pd.concat(all_jobs, ignore_index=True)
     combined = combined.drop_duplicates(subset=["job_url"])
 
-    # Replace NaN with None so it serializes as valid JSON (NaN isn't valid JSON)
-    combined = combined.where(pd.notnull(combined), None)
+    jobs = json_safe_jobs(combined.to_dict(orient="records"), errors)
 
-    print(f"=== {site} scrape finished: {len(combined)} jobs ===")
+    print(f"=== {site} scrape finished: {len(jobs)} jobs ===")
 
     return {
-        "total": len(combined),
-        "jobs": combined.to_dict(orient="records"),
+        "total": len(jobs),
+        "jobs": jobs,
         "errors": errors,
     }
 

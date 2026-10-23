@@ -10,7 +10,7 @@ import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from fastapi import APIRouter, Query
 
-from .common import clean_nans
+from .common import json_safe_jobs
 from .config import DEFAULT_POSITIONS, DEFAULT_COUNTRY_CODES, DEFAULT_HOURS, DEFAULT_LIMIT
 
 router = APIRouter()
@@ -96,7 +96,7 @@ def freehire(
             df = df.drop_duplicates(subset=[url_col])
             break
 
-    cleaned_jobs = clean_nans(df.to_dict(orient="records"))
+    cleaned_jobs = json_safe_jobs(df.to_dict(orient="records"), errors)
 
     print(f"=== Freehire API finished: {len(cleaned_jobs)} unique jobs combined ===")
 

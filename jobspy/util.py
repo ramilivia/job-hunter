@@ -12,6 +12,8 @@ from bs4 import BeautifulSoup
 from curl_cffi import CurlOpt
 from curl_cffi import requests as curl_requests
 from markdownify import markdownify as md
+from requests.adapters import HTTPAdapter
+from urllib3.util import Retry
 
 from jobspy.model import (
     DescriptionFormat,
@@ -90,6 +92,16 @@ class TLSRotating(  # type: ignore[misc]
 S = TypeVar("S", RequestsRotating, TLSRotating)
 
 
+class BackoffRetry(Retry):
+    """urllib3 skips the wait before the first retry, which is useless after a 429."""
+
+    def get_backoff_time(self) -> float:
+        attempts = len(self.history)
+        if attempts == 0:
+            return 0
+        return float(min(self.backoff_max, self.backoff_factor * 2 ** (attempts - 1)))
+
+
 def create_session(
     session: S, scraper_input: ScraperInput, headers: dict[str, str] | None = None
 ) -> S:
@@ -99,6 +111,16 @@ def create_session(
         session.headers.update(headers)
     if scraper_input.user_agent:
         session.headers["user-agent"] = scraper_input.user_agent
+    if scraper_input.retry and isinstance(session, requests.Session):
+        retries = BackoffRetry(
+            total=3,
+            backoff_factor=5,
+            status_forcelist=[429, 500, 502, 503, 504],
+            raise_on_status=False,
+        )
+        adapter = HTTPAdapter(max_retries=retries)
+        session.mount("https://", adapter)
+        session.mount("http://", adapter)
     return session
 
 

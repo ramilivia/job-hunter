@@ -80,6 +80,7 @@ def scrape_jobs(
     verbose: int | None = 1,
     user_agent: str | None = None,
     fetch_description: bool | None = False,
+    retry: bool | None = False,
 ) -> pd.DataFrame:
     """
     Scrapes job data from job boards concurrently

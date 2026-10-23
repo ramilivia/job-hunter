@@ -13,7 +13,7 @@ import requests
 from concurrent.futures import ThreadPoolExecutor
 from fastapi import APIRouter, Query
 
-from .common import clean_nans
+from .common import json_safe_jobs
 from .config import DEFAULT_POSITIONS
 
 router = APIRouter()
@@ -102,7 +102,7 @@ def arbeitnow(
             df = df.drop_duplicates(subset=[url_col])
             break
 
-    cleaned_jobs = clean_nans(df.to_dict(orient="records"))
+    cleaned_jobs = json_safe_jobs(df.to_dict(orient="records"), errors)
 
     print(f"=== Arbeitnow API finished: {len(cleaned_jobs)} unique jobs ===")
 

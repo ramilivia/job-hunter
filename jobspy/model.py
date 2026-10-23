@@ -267,6 +267,8 @@ class ScraperInput(BaseModel):
     ca_cert: FilePath | None = None
     user_agent: str | None = None
     verbose: int = Field(1, ge=0, le=2)
+    retry: bool = False
+    """Retry 429 and 5xx responses with growing waits (5s, 10s, 20s); boards on curl_cffi sessions ignore it."""
 
     @field_validator("site_name", "proxies", mode="before")
     @classmethod
