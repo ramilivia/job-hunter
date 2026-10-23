@@ -1,16 +1,27 @@
-<img src="https://github.com/cullenwatson/JobSpy/assets/78247585/ae185b7e-e444-4712-8bb9-fa97f53e896b" width="400">
+<h1 align="center">
+  <a href="https://github.com/speedyapply/JobSpy"><img src="https://github.com/user-attachments/assets/dcb90340-9469-4808-bc51-868e59a000e0" alt="JobSpy" width="320"></a>
+</h1>
 
-**JobSpy** is a job scraping library with the goal of aggregating all the jobs from popular job boards with one tool.
+<p align="center">
+  <a href="https://pypi.org/project/python-jobspy/"><img src="https://img.shields.io/pypi/v/python-jobspy" alt="PyPI version"></a>
+  <a href="https://pypi.org/project/python-jobspy/"><img src="https://img.shields.io/pypi/pyversions/python-jobspy" alt="Python versions"></a>
+  <a href="https://pepy.tech/projects/python-jobspy"><img src="https://static.pepy.tech/badge/python-jobspy/month" alt="Downloads per month"></a>
+  <a href="https://github.com/speedyapply/JobSpy/actions/workflows/ci.yml"><img src="https://github.com/speedyapply/JobSpy/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI"></a>
+  <a href="https://github.com/speedyapply/JobSpy/blob/main/LICENSE"><img src="https://img.shields.io/pypi/l/python-jobspy" alt="License: MIT"></a>
+  <a href="https://discord.gg/v7WdHnrNcN"><img src="https://img.shields.io/discord/1227411661221269565?label=discord&logo=discord&logoColor=white" alt="Discord"></a>
+</p>
 
-## Features
+**JobSpy** is a job scraping library that aggregates jobs from popular job boards with one tool:
 
-- Scrapes job postings from **LinkedIn**, **Indeed**, **Glassdoor**, **Google**, **ZipRecruiter**, & other job boards concurrently
+- Scrapes job postings from **LinkedIn**, **Indeed**, **Glassdoor**, **ZipRecruiter**, **Bayt**, **Naukri**, **BDJobs** & **HelloWork** concurrently
 - Aggregates the job postings in a dataframe
-- Proxies support to bypass blocking
+- Proxy support to bypass blocking
 
-![jobspy](https://github.com/cullenwatson/JobSpy/assets/78247585/ec7ef355-05f6-4fd3-8161-a817e31c5c57)
+<p align="center">
+  <a href="https://github.com/speedyapply/JobSpy"><img src="https://github.com/cullenwatson/JobSpy/assets/78247585/ec7ef355-05f6-4fd3-8161-a817e31c5c57" alt="JobSpy demo"></a>
+</p>
 
-### Installation
+## Installation
 
 ```
 pip install -U python-jobspy
@@ -18,48 +29,74 @@ pip install -U python-jobspy
 
 _Python version >= [3.10](https://www.python.org/downloads/release/python-3100/) required_
 
-### Usage
+## Usage
 
 ```python
-import csv
 from jobspy import scrape_jobs
 
 jobs = scrape_jobs(
-    site_name=["indeed", "linkedin", "zip_recruiter", "google"], # "glassdoor", "bayt", "naukri", "bdjobs"
+    site_name=["indeed", "linkedin", "zip_recruiter", "glassdoor"],  # also "bayt", "naukri", "bdjobs", "hellowork"
     search_term="software engineer",
-    google_search_term="software engineer jobs near San Francisco, CA since yesterday",
     location="San Francisco, CA",
     results_wanted=20,
     hours_old=72,
-    country_indeed='USA',
-    
-    # linkedin_fetch_description=True # gets more info such as description, direct job url (slower)
-    # proxies=["208.195.175.46:65095", "208.195.175.45:65095", "localhost"],
+    country_indeed="USA",
+    # fetch_description=True,  # read each job's page on boards whose search results have no description (slower)
+    # proxies=["user:pass@host:port", "localhost"],
 )
 print(f"Found {len(jobs)} jobs")
 print(jobs.head())
-jobs.to_csv("jobs.csv", quoting=csv.QUOTE_NONNUMERIC, escapechar="\\", index=False) # to_excel
+jobs.to_csv("jobs.csv", index=False)
 ```
 
-### Output
+## Output
 
 ```
-SITE           TITLE                             COMPANY           CITY          STATE  JOB_TYPE  INTERVAL  MIN_AMOUNT  MAX_AMOUNT  JOB_URL                                            DESCRIPTION
-indeed         Software Engineer                 AMERICAN SYSTEMS  Arlington     VA     None      yearly    200000      150000      https://www.indeed.com/viewjob?jk=5e409e577046...  THIS POSITION COMES WITH A 10K SIGNING BONUS!...
-indeed         Senior Software Engineer          TherapyNotes.com  Philadelphia  PA     fulltime  yearly    135000      110000      https://www.indeed.com/viewjob?jk=da39574a40cb...  About Us TherapyNotes is the national leader i...
-linkedin       Software Engineer - Early Career  Lockheed Martin   Sunnyvale     CA     fulltime  yearly    None        None        https://www.linkedin.com/jobs/view/3693012711      Description:By bringing together people that u...
-linkedin       Full-Stack Software Engineer      Rain              New York      NY     fulltime  yearly    None        None        https://www.linkedin.com/jobs/view/3696158877      Rain’s mission is to create the fastest and ea...
-zip_recruiter Software Engineer - New Grad       ZipRecruiter      Santa Monica  CA     fulltime  yearly    130000      150000      https://www.ziprecruiter.com/jobs/ziprecruiter...  We offer a hybrid work environment. Most US-ba...
-zip_recruiter Software Developer                 TEKsystems        Phoenix       AZ     fulltime  hourly    65          75          https://www.ziprecruiter.com/jobs/teksystems-0...  Top Skills' Details• 6 years of Java developme...
+SITE           TITLE                             COMPANY           LOCATION                JOB_TYPE  INTERVAL  MIN_AMOUNT  MAX_AMOUNT  JOB_URL                                            DESCRIPTION
+indeed         Software Engineer                 AMERICAN SYSTEMS  Arlington, VA, USA      None      yearly    150000      200000      https://www.indeed.com/viewjob?jk=5e409e577046...  THIS POSITION COMES WITH A 10K SIGNING BONUS!...
+indeed         Senior Software Engineer          TherapyNotes.com  Philadelphia, PA, USA   fulltime  yearly    110000      135000      https://www.indeed.com/viewjob?jk=da39574a40cb...  About Us TherapyNotes is the national leader i...
+linkedin       Software Engineer - Early Career  Lockheed Martin   Sunnyvale, CA, USA      fulltime  yearly    None        None        https://www.linkedin.com/jobs/view/3693012711      Description:By bringing together people that u...
+linkedin       Full-Stack Software Engineer      Rain              New York, NY, USA       fulltime  yearly    None        None        https://www.linkedin.com/jobs/view/3696158877      Rain’s mission is to create the fastest and ea...
+zip_recruiter  Software Engineer - New Grad      ZipRecruiter      Santa Monica, CA, USA   fulltime  yearly    130000      150000      https://www.ziprecruiter.com/jobs/ziprecruiter...  We offer a hybrid work environment. Most US-ba...
+zip_recruiter  Software Developer                TEKsystems        Phoenix, AZ, USA        fulltime  hourly    65          75          https://www.ziprecruiter.com/jobs/teksystems-0...  Top Skills' Details• 6 years of Java developme...
 
 ```
 
-### Parameters for `scrape_jobs()`
+## Command line
+
+The package installs a `jobspy` command whose options mirror the `scrape_jobs()` parameters below; `jobspy -h` lists them, the output fields and exit codes.
+
+```
+uv tool install python-jobspy
+
+jobspy "software engineer" --site indeed,linkedin --location Chicago -n 20
+jobspy nurse --site indeed,linkedin --hours-old 24 -o jobs.jsonl
+jobspy "data analyst" --remote --fields title,company,job_url
+```
+
+## MCP server
+
+[`mcp-jobspy`](https://pypi.org/project/mcp-jobspy/) is an MCP server that runs with `uvx mcp-jobspy@latest`. See [mcp/README.md](https://github.com/speedyapply/JobSpy/blob/main/mcp/README.md) for setup, tools and proxies.
+
+**Standard config** works for most clients:
+
+```json
+{
+  "mcpServers": {
+    "jobspy": {
+      "command": "uvx",
+      "args": ["mcp-jobspy@latest"]
+    }
+  }
+}
+```
+
+## Parameters for `scrape_jobs()`
 
 ```plaintext
 Optional
 ├── site_name (list|str): 
-|    linkedin, zip_recruiter, indeed, glassdoor, google, bayt, bdjobs
+|    linkedin, zip_recruiter, indeed, glassdoor, google, bayt, bdjobs, naukri, hellowork
 |    (default is all)
 │
 ├── search_term (str)
@@ -73,11 +110,12 @@ Optional
 |    in miles, default 50
 │
 ├── job_type (str): 
-|    fulltime, parttime, internship, contract
+|    fulltime, parttime, contract, temporary, internship, perdiem, other, volunteer
 │
-├── proxies (list): 
-|    in format ['user:pass@host:port', 'localhost']
+├── proxies (list|str): 
+|    in format ['user:pass@host:port', 'localhost'], or a single proxy as a string
 |    each job board scraper will round robin through the proxies
+|    socks proxies on LinkedIn, Indeed and BDJobs need pip install "requests[socks]"
 |
 ├── is_remote (bool)
 │
@@ -85,33 +123,38 @@ Optional
 |    number of job results to retrieve for each site specified in 'site_name'
 │
 ├── easy_apply (bool): 
-|    filters for jobs that are hosted on the job board site (LinkedIn easy apply filter no longer works)
+|    filters for jobs that are hosted on the job board site
 |
 ├── user_agent (str): 
 |    override the default user agent which may be outdated
 │
 ├── description_format (str): 
-|    markdown, html (Format type of the job descriptions. Default is markdown.)
+|    markdown, html, plain (Format type of the job descriptions. Default is markdown.)
 │
 ├── offset (int): 
-|    starts the search from an offset (e.g. 25 will start the search from the 25th result)
+|    skips that many results (e.g. 25 skips the first 25 and starts from the 26th)
 │
 ├── hours_old (int): 
 |    filters jobs by the number of hours since the job was posted 
-|    (ZipRecruiter and Glassdoor round up to next day.)
+|    (Glassdoor filters by whole days, so it rounds up to the next day.)
 │
 ├── verbose (int) {0, 1, 2}: 
 |    Controls the verbosity of the runtime printouts 
-|    (0 prints only errors, 1 is errors+warnings, 2 is all logs. Default is 2.)
-
+|    (0 prints only errors, 1 is errors+warnings, 2 is all logs. Default is 1.)
+│
+├── fetch_description (bool): 
+|    for boards whose search results don't include the job description: fetches each job's
+|    page for the description and other details (e.g. job type). Without it these are empty
+|    for those boards. Adds one request per job, so use proxies for larger searches
+│
 ├── linkedin_fetch_description (bool): 
-|    fetches full description and direct job url for LinkedIn (Increases requests by O(n))
+|    deprecated, use fetch_description (still works; removed in 2.0)
 │
 ├── linkedin_company_ids (list[int]): 
 |    searches for linkedin jobs with specific company ids
 |
 ├── country_indeed (str): 
-|    filters the country on Indeed & Glassdoor (see below for correct spelling)
+|    filters the country on Indeed & Glassdoor (default is usa; see below for the names)
 |
 ├── enforce_annual_salary (bool): 
 |    converts wages to annual salary
@@ -120,46 +163,33 @@ Optional
 |    path to CA Certificate file for proxies
 ```
 
-```
-├── Indeed limitations:
-|    Only one from this list can be used in a search:
-|    - hours_old
-|    - job_type & is_remote
-|    - easy_apply
-│
-└── LinkedIn limitations:
-|    Only one from this list can be used in a search:
-|    - hours_old
-|    - easy_apply
-```
-
 ## Supported Countries for Job Searching
 
-### **LinkedIn**
+### LinkedIn
 
 LinkedIn searches globally & uses only the `location` parameter. 
 
-### **ZipRecruiter**
+### ZipRecruiter
 
 ZipRecruiter searches for jobs in **US/Canada** & uses only the `location` parameter.
 
-### **Indeed / Glassdoor**
+### Indeed / Glassdoor
 
-Indeed & Glassdoor supports most countries, but the `country_indeed` parameter is required. Additionally, use the `location`
+Indeed & Glassdoor support most countries, chosen with the `country_indeed` parameter (default `usa`). Additionally, use the `location`
 parameter to narrow down the location, e.g. city & state if necessary. 
 
 You can specify the following countries when searching on Indeed (use the exact name, * indicates support for Glassdoor):
 
 |                      |              |            |                |
 |----------------------|--------------|------------|----------------|
-| Argentina            | Australia*   | Austria*   | Bahrain        |
+| Argentina*           | Australia*   | Austria*   | Bahrain        |
 | Belgium*             | Brazil*      | Canada*    | Chile          |
 | China                | Colombia     | Costa Rica | Czech Republic |
 | Denmark              | Ecuador      | Egypt      | Finland        |
 | France*              | Germany*     | Greece     | Hong Kong*     |
 | Hungary              | India*       | Indonesia  | Ireland*       |
 | Israel               | Italy*       | Japan      | Kuwait         |
-| Luxembourg           | Malaysia     | Mexico*    | Morocco        |
+| Luxembourg           | Malaysia*    | Mexico*    | Morocco        |
 | Netherlands*         | New Zealand* | Nigeria    | Norway         |
 | Oman                 | Pakistan     | Panama     | Peru           |
 | Philippines          | Poland       | Portugal   | Qatar          |
@@ -169,20 +199,42 @@ You can specify the following countries when searching on Indeed (use the exact 
 | United Arab Emirates | UK*          | USA*       | Uruguay        |
 | Venezuela            | Vietnam*     |            |                |
 
-### **Bayt**
+### Bayt
 
-Bayt only uses the search_term parameter currently and searches internationally
+Bayt searches all countries unless `location` names one it covers, e.g. `"Dubai, UAE"` or `"Saudi Arabia"`.
 
+### BDJobs
+
+BDJobs searches Bangladesh. `location` takes a division or district, e.g. `"Dhaka"` or `"Chattogram Division"`.
+
+### Naukri
+
+Naukri searches India. `location` takes a city, e.g. `"Pune"`.
+
+### HelloWork
+
+HelloWork searches France. `location` takes a French city, postcode or region, e.g. `"Lyon"`. Most jobs are posted in French, so French search terms find more.
 
 
 ## Notes
 * Indeed is the best scraper currently with no rate limiting.  
-* All the job board endpoints are capped at around 1000 jobs on a given search.  
-* LinkedIn is the most restrictive and usually rate limits around the 10th page with one ip. Proxies are a must basically.
+* Indeed's `date_posted` is the day a job was added to Indeed, the same date `hours_old` filters on.  
+* Most job board endpoints are capped at around 1000 jobs on a given search.  
+* LinkedIn rate limits bursts of requests with a 429, which clears within about a minute. Use proxies for larger searches.
+* Glassdoor rate limits above about 2 requests a second.
 
 ## Frequently Asked Questions
 
+**Q: How do I tell a blocked board from one with no jobs?**  
+**A:** Failures and ignored options are logged as they happen, and the result's `attrs` carry the same messages so your code can read them:
+
+```py
+jobs.attrs["errors"]    # {"linkedin": "response status code 429 (blocked: use a proxy)"}
+jobs.attrs["warnings"]  # {"bdjobs": ["job_type internship isn't supported, ignoring it"]}
+```
+
 ---
+
 **Q: Why is Indeed giving unrelated roles?**  
 **A:** Indeed searches the description too.
 
@@ -200,57 +252,50 @@ This searches the description/title and must include software, summer, 2025, one
 ---
 
 **Q: No results when using "google"?**  
-**A:** You have to use super specific syntax. Search for google jobs on your browser and then whatever pops up in the google jobs search box after applying some filters is what you need to copy & paste into the google_search_term. 
+**A:** Google Jobs is currently unavailable.
 
 ---
 
 **Q: Received a response code 429?**  
-**A:** This indicates that you have been blocked by the job board site for sending too many requests. All of the job board sites are aggressive with blocking. We recommend:
+**A:** The board blocked you for sending too many requests. All of the job board sites are aggressive with blocking. We recommend:
 
 - Wait some time between scrapes (site-dependent).
 - Try using the proxies param to change your IP address.
 
 ---
 
-### JobPost Schema
+## JobPost Schema
 
 ```plaintext
 JobPost
+├── id
+├── site
+├── job_url
+├── job_url_direct
 ├── title
 ├── company
-├── company_url
-├── job_url
 ├── location
-│   ├── country
-│   ├── city
-│   ├── state
-├── is_remote
-├── description
-├── job_type: fulltime, parttime, internship, contract
-├── job_function
-│   ├── interval: yearly, monthly, weekly, daily, hourly
-│   ├── min_amount
-│   ├── max_amount
-│   ├── currency
-│   └── salary_source: direct_data, description (parsed from posting)
 ├── date_posted
-└── emails
-
-Linkedin specific
-└── job_level
-
-Linkedin & Indeed specific
-└── company_industry
-
-Indeed specific
-├── company_country
+├── job_type: fulltime, parttime, internship, contract, temporary, ...
+├── salary_source: direct_data, description (parsed from posting)
+├── interval: yearly, monthly, weekly, daily, hourly
+├── min_amount
+├── max_amount
+├── currency
+├── is_remote
+├── job_level
+├── job_function
+├── listing_type
+├── emails
+├── description
+├── company_industry
+├── company_url
+├── company_logo
+├── company_url_direct
 ├── company_addresses
-├── company_employees_label
-├── company_revenue_label
+├── company_num_employees
+├── company_revenue
 ├── company_description
-└── company_logo
-
-Naukri specific
 ├── skills
 ├── experience_range
 ├── company_rating
@@ -258,3 +303,5 @@ Naukri specific
 ├── vacancy_count
 └── work_from_home_type
 ```
+
+A column is empty when the job board doesn't provide it.
