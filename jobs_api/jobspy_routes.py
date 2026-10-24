@@ -13,7 +13,7 @@ from .config import DEFAULT_POSITIONS, DEFAULT_COUNTRY_NAMES, DEFAULT_HOURS, DEF
 
 router = APIRouter()
 
-DEFAULT_MAX_WORKERS = 3
+DEFAULT_MAX_WORKERS = 4
 
 
 def scrape_one(site: str, position: str, country: str, results_wanted: int, hours_old: int, is_remote: bool):

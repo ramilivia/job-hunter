@@ -1,7 +1,33 @@
 import json
 import math
 
+import requests
 from fastapi.encoders import jsonable_encoder
+from requests.adapters import HTTPAdapter
+from urllib3.util import Retry
+
+
+class BackoffRetry(Retry):
+    """urllib3 skips the wait before the first retry, which is useless after a 429."""
+
+    def get_backoff_time(self) -> float:
+        attempts = len(self.history)
+        if attempts == 0:
+            return 0
+        return float(min(self.backoff_max, self.backoff_factor * 2 ** (attempts - 1)))
+
+
+def retrying_session() -> requests.Session:
+    """Session that retries 429/5xx, honouring Retry-After, else waiting 5s, 10s, 20s."""
+    session = requests.Session()
+    adapter = HTTPAdapter(max_retries=BackoffRetry(
+        total=3,
+        backoff_factor=5,
+        status_forcelist=[429, 500, 502, 503, 504],
+    ))
+    session.mount("https://", adapter)
+    session.mount("http://", adapter)
+    return session
 
 
 def clean_nans(obj):
