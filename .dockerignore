@@ -1,0 +1,9 @@
+.git
+.github
+venv
+mcp
+jobs.json
+test_jobs.py
+**/__pycache__
+**/*.pyc
+.env
