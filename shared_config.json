@@ -1,0 +1,22 @@
+{
+  "positions": [
+    "Solutions Architect",
+    "Engineering Manager",
+    "Forward Deployed Engineer"
+  ],
+  "countries": [
+    { "name": "Netherlands", "code": "nl" },
+    { "name": "Germany", "code": "de" },
+    { "name": "Poland", "code": "pl" },
+    { "name": "Spain", "code": "es" },
+    { "name": "Portugal", "code": "pt" },
+    { "name": "Estonia", "code": "ee" },
+    { "name": "Czechia", "code": "cz" },
+    { "name": "Switzerland", "code": "ch" },
+    { "name": "Austria", "code": "at" },
+    { "name": "Norway", "code": "no" },
+    { "name": "Denmark", "code": "dk" },
+    { "name": "Sweden", "code": "se" },
+    { "name": "France", "code": "fr" }
+  ]
+}

@@ -1,0 +1,7 @@
+jobdrop>=2.10.0
+fastapi>=0.110.0
+uvicorn>=0.29.0
+pandas>=2.1.0
+# Wellfound is scraped via Camoufox (patched Firefox) to pass DataDome. JobDrop
+# imports it lazily, so pin it here explicitly for the Wellfound endpoint to work.
+camoufox>=0.4.11,<0.5.0

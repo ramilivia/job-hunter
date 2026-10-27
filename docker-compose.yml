@@ -1,0 +1,40 @@
+name: job-hunter
+
+services:
+  jobspy:
+    build:
+      context: ./JobSpy
+      dockerfile: Dockerfile
+    image: job-hunter-jobspy
+    container_name: jobspy
+    environment:
+      SHARED_CONFIG_PATH: /config/shared_config.json
+      PYTHONUNBUFFERED: "1"
+      PYTHONIOENCODING: utf-8
+    volumes:
+      - ./shared_config.json:/config/shared_config.json:ro
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  jobdrop:
+    build:
+      context: ./JobDrop
+      dockerfile: Dockerfile
+    image: job-hunter-jobdrop
+    container_name: jobdrop
+    environment:
+      SHARED_CONFIG_PATH: /config/shared_config.json
+      PYTHONUNBUFFERED: "1"
+      PYTHONIOENCODING: utf-8
+    volumes:
+      - ./shared_config.json:/config/shared_config.json:ro
+      # Persists the patched Firefox that Camoufox downloads on first use,
+      # so Wellfound requests stay fast across container restarts.
+      - camoufox_cache:/app/.cache
+    ports:
+      - "8001:8001"
+    restart: unless-stopped
+
+volumes:
+  camoufox_cache:
