@@ -1,0 +1,22 @@
+# Python
+**/__pycache__/
+**/*.pyc
+**/.pytest_cache/
+**/.ipynb_checkpoints/
+**/venv/
+**/.venv/
+**/env/
+**/dist/
+**/*.egg-info/
+
+# Camoufox / browser cache (JobDrop)
+**/.cache/
+
+# Environment & secrets
+.env
+.env.*
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
