@@ -21,6 +21,8 @@ Then call it, e.g.:
 from fastapi import FastAPI
 
 from .wellfound_routes import router as wellfound_router
+from .adzuna_routes import router as adzuna_router
 
 app = FastAPI()
 app.include_router(wellfound_router)
+app.include_router(adzuna_router)

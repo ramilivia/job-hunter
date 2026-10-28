@@ -22,7 +22,7 @@ from fastapi import APIRouter, Query
 from jobdrop import scrape_jobs
 
 from .common import json_safe_jobs
-from .config import DEFAULT_COUNTRY_NAMES, DEFAULT_HOURS, DEFAULT_LIMIT, DEFAULT_POSITIONS
+from .config import DEFAULT_COUNTRY_NAMES, DEFAULT_LIMIT, DEFAULT_POSITIONS, WELLFOUND_DEFAULT_HOURS
 
 router = APIRouter()
 
@@ -63,7 +63,7 @@ def wellfound(
     positions: str = Query(",".join(DEFAULT_POSITIONS), description="Comma-separated list of job titles, searched one at a time"),
     countries: str = Query(",".join(DEFAULT_COUNTRY_NAMES), description="Comma-separated list of countries (or free-text locations)"),
     results_wanted: int = Query(DEFAULT_LIMIT),
-    hours_old: int | None = Query(DEFAULT_HOURS, description="Drop postings older than N hours (omit for no recency filter)"),
+    hours_old: int | None = Query(WELLFOUND_DEFAULT_HOURS, description="Drop postings older than N hours (omit for no recency filter)"),
     is_remote: bool = Query(False, description="Only return remote roles"),
     max_workers: int = Query(DEFAULT_MAX_WORKERS, description="Number of concurrent scrapes"),
 ):

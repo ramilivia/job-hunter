@@ -18,5 +18,6 @@
     { "name": "Denmark", "code": "dk" },
     { "name": "Sweden", "code": "se" },
     { "name": "France", "code": "fr" }
-  ]
+  ],
+  "hours_old": 24
 }

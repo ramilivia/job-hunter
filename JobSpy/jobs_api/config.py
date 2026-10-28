@@ -70,5 +70,5 @@ _countries = _CONFIG.get("countries") or _FALLBACK_COUNTRIES
 DEFAULT_COUNTRY_NAMES = [c["name"] for c in _countries]
 DEFAULT_COUNTRY_CODES = [c["code"] for c in _countries]
 
-DEFAULT_HOURS = 24
+DEFAULT_HOURS = _CONFIG.get("hours_old") or 24
 DEFAULT_LIMIT = 20

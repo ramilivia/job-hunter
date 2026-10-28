@@ -1,7 +1,7 @@
-# JobDrop Wellfound API
+# JobDrop API
 
 A small, standalone FastAPI service that exposes **Wellfound** (formerly
-AngelList) job listings over HTTP, backed by the
+AngelList) and **Adzuna** job listings over HTTP, backed by the
 [`jobdrop`](https://github.com/kbwhodat/jobdrop) scraper library.
 
 ## Why a separate project?
@@ -14,9 +14,9 @@ suggests. JobSpy and JobDrop cannot live in the same Python environment:
 | `python-jobspy` 1.4.1 | `curl_cffi>=0.16.2` |
 | `jobdrop` 2.10.0     | `curl-cffi<0.8.0,>=0.7.0` |
 
-`pip` cannot resolve both, so this project keeps JobDrop (and its Wellfound
-scraper) in its own virtualenv, exposing its own HTTP endpoint on a different
-port (8001) from the JobSpy API (8000).
+`pip` cannot resolve both, so this project keeps JobDrop in its own virtualenv,
+exposing its own HTTP endpoint on a different port (8001) from the JobSpy API
+(8000).
 
 ## Setup
 
@@ -36,13 +36,11 @@ pip install -r requirements.txt
 python3 -m app        # serves on http://0.0.0.0:8001
 ```
 
-## Endpoint
+## Endpoints
 
-```
-GET /wellfound
-```
+### `GET /wellfound`
 
-Query parameters:
+Scrapes Wellfound (formerly AngelList) via Camoufox. Query parameters:
 
 | Param            | Default                                    | Description |
 |---|---|---|
@@ -51,13 +49,35 @@ Query parameters:
 | `results_wanted` | `20`                                       | Max results per position × country |
 | `hours_old`      | `none`                                     | Drop postings older than N hours (omit to return all postings regardless of age) |
 | `is_remote`      | `false`                                    | Remote-only roles |
-| `max_workers`    | `1`                                        | Concurrent scrapes (Wellfound renders slowly; keep low) |
+| `max_workers`    | `3`                                        | Concurrent scrapes (Wellfound renders slowly; keep low) |
+
+### `GET /adzuna`
+
+Queries Adzuna via jobdrop's plain-HTTP scraper (sub-second per call, no
+Camoufox). Credentials come from the `ADZUNA_APP_ID` / `ADZUNA_APP_KEY` env
+vars, falling back to jobdrop's bundled defaults when absent.
+
+| Param            | Default                                    | Description |
+|---|---|---|
+| `positions`      | `Solutions Architect,Engineering Manager,Forward Deployed Engineer` | Comma-separated job titles, searched one at a time |
+| `countries`      | (from shared config)                       | Comma-separated countries, cross-joined with each position |
+| `results_wanted` | `20`                                       | Max results per position × country |
+| `hours_old`      | `24` (from shared config)                  | Drop postings older than N hours |
+| `is_remote`      | `false`                                    | Remote-only roles |
+| `max_workers`    | `4`                                        | Concurrent requests |
+
+> **Country caveat**: jobdrop maps country names to Adzuna's 2-letter code via
+> a fixed map. The route rejects unsupported countries up front and reports them
+> in `errors` (e.g. Portugal, Estonia, Czechia, Norway, Denmark, Sweden). The
+> supported European set is Germany, France, Netherlands, Poland, Spain,
+> Switzerland, Austria.
 
 Examples:
 
 ```bash
 curl "http://localhost:8001/wellfound?positions=Engineering%20Manager&countries=Germany%2CNetherlands&hours_old=168"
-curl "http://localhost:8001/wellfound?positions=Data%20Engineer,Backend%20Engineer&countries=Berlin%2CAmsterdam"
+curl "http://localhost:8001/adzuna?positions=Engineering%20Manager&countries=Germany%2CNetherlands"
+curl "http://localhost:8001/adzuna?positions=Solutions%20Architect&countries=Germany&hours_old=24"
 ```
 
 Response shape (matches the JobSpy `jobs_api` so the same pipeline can consume
@@ -69,8 +89,8 @@ both):
   "jobs": [
     {
       "id": "...",
-      "site": "wellfound",
-      "job_url": "https://wellfound.com/jobs/...",
+      "site": "adzuna",
+      "job_url": "https://www.adzuna.co.uk/...",
       "title": "Engineering Manager",
       "company": "Acme",
       "location": "Berlin, Germany",
@@ -98,6 +118,7 @@ JobDrop/
 │   ├── __init__.py          # FastAPI app factory + router registration
 │   ├── __main__.py          # uvicorn entrypoint (port 8001)
 │   ├── wellfound_routes.py  # GET /wellfound endpoint + scraping logic
+│   ├── adzuna_routes.py     # GET /adzuna endpoint + scraping logic
 │   ├── common.py            # JSON-safe serialization helpers
 │   └── config.py            # default positions / hours / limit
 └── requirements.txt

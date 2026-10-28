@@ -71,8 +71,10 @@ _countries = _CONFIG.get("countries") or _FALLBACK_COUNTRIES
 # name (not the ISO code). Kept in the same order as the shared file.
 DEFAULT_COUNTRY_NAMES = [c["name"] for c in _countries]
 
+DEFAULT_HOURS = _CONFIG.get("hours_old") or 24
+DEFAULT_LIMIT = 20
+
 # Wellfound postings are sparse and often days/weeks old, so a 24h recency
 # filter would silently drop almost every result. Default to "no recency
 # filter" (None) so a plain /wellfound call returns all matching jobs.
-DEFAULT_HOURS = None
-DEFAULT_LIMIT = 20
+WELLFOUND_DEFAULT_HOURS = None

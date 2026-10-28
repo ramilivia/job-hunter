@@ -5,7 +5,7 @@ Two job-search services running side by side:
 | Service  | Project  | Library | Port | Endpoint(s) |
 |---|---|---|---|---|
 | `jobspy`  | `JobSpy/` | [JobSpy](https://github.com/speedyapply/JobSpy)  | 8000 | `/linkedin`, `/indeed`, `/google`, `/glassdoor`, `/freehire`, `/arbeitnow` |
-| `jobdrop` | `JobDrop/` | [JobDrop](https://github.com/kbwhodat/jobdrop) | 8001 | `/wellfound` |
+| `jobdrop` | `JobDrop/` | [JobDrop](https://github.com/kbwhodat/jobdrop) | 8001 | `/wellfound`, `/adzuna` |
 
 They are intentionally separate projects because **JobSpy and JobDrop pin
 incompatible versions of `curl_cffi`** and cannot run in the same Python
@@ -21,7 +21,8 @@ Both services read the same file: [`shared_config.json`](./shared_config.json).
   "countries": [
     { "name": "Netherlands", "code": "nl" },
     { "name": "Germany", "code": "de" }
-  ]
+  ],
+  "hours_old": 24
 }
 ```
 
@@ -29,6 +30,9 @@ Both services read the same file: [`shared_config.json`](./shared_config.json).
   comma-separated `positions` query parameter.
 - **`countries`** → used by `jobspy` (LinkedIn/Indeed use `name`, Freehire uses
   `code`). Wellfound geocodes from a free-text location, so it doesn't need it.
+- **`hours_old`** → default recency filter (hours) for both services. Wellfound
+  overrides this to `none` because its sparse postings would otherwise be
+  dropped almost entirely.
 
 Edit `shared_config.json` to change defaults everywhere. Each service resolves
 the file via the `SHARED_CONFIG_PATH` env var, falling back to walking up the
@@ -45,6 +49,7 @@ docker compose up --build
 | http://localhost:8000/linkedin | JobSpy |
 | http://localhost:8000/indeed   | JobSpy |
 | http://localhost:8001/wellfound | JobDrop (Wellfound) |
+| http://localhost:8001/adzuna    | JobDrop (Adzuna)    |
 
 The shared config is bind-mounted read-only into both containers at
 `/config/shared_config.json`.
