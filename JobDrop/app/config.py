@@ -77,4 +77,4 @@ DEFAULT_LIMIT = 20
 # Wellfound postings are sparse and often days/weeks old, so a 24h recency
 # filter would silently drop almost every result. Default to "no recency
 # filter" (None) so a plain /wellfound call returns all matching jobs.
-WELLFOUND_DEFAULT_HOURS = None
+WELLFOUND_DEFAULT_HOURS = DEFAULT_HOURS
