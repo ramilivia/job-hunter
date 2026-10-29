@@ -51,6 +51,30 @@ Scrapes Wellfound (formerly AngelList) via Camoufox. Query parameters:
 | `is_remote`      | `false`                                    | Remote-only roles |
 | `max_workers`    | `3`                                        | Concurrent scrapes (Wellfound renders slowly; keep low) |
 
+### `GET /builtin`
+
+Scrapes Built In (builtin.com) via jobdrop's plain-HTML scraper (no Camoufox,
+sub-second per call). Built In is a tech-vetted local job board family (NYC,
+LA, Chicago, Atlanta, etc.); jobdrop cross-source dedups its results against
+LinkedIn/Indeed by (company, title), so Built In contributes its tech-quality
+filter without inflating result counts.
+
+Country filtering works by mapping each configured country to its ISO alpha-3
+code (`code_alpha3` in `shared_config.json`) and passing it as Built In's
+`country=` query param, plus the `/jobs/remote` path segment for remote-only
+results. Built In ignores the plain `location=` param that jobdrop's stock
+scraper emits, so this route applies a small URL-builder patch to make the
+filter actually take effect.
+
+| Param            | Default                                    | Description |
+|---|---|---|
+| `positions`      | `Solutions Architect,Engineering Manager,Forward Deployed Engineer` | Comma-separated job titles, searched one at a time |
+| `countries`      | (from shared config)                       | Comma-separated countries (or free-text locations), cross-joined with each position |
+| `results_wanted` | `20`                                       | Max results per position × country |
+| `hours_old`      | `24` (from shared config)                  | Drop postings older than N hours |
+| `is_remote`      | `false`                                    | Remote-only roles |
+| `max_workers`    | `4`                                        | Concurrent requests |
+
 ### `GET /adzuna`
 
 Queries Adzuna via jobdrop's plain-HTTP scraper (sub-second per call, no
@@ -76,6 +100,7 @@ Examples:
 
 ```bash
 curl "http://localhost:8001/wellfound?positions=Engineering%20Manager&countries=Germany%2CNetherlands&hours_old=168"
+curl "http://localhost:8001/builtin?positions=Engineering%20Manager&countries=Germany%2CNetherlands"
 curl "http://localhost:8001/adzuna?positions=Engineering%20Manager&countries=Germany%2CNetherlands"
 curl "http://localhost:8001/adzuna?positions=Solutions%20Architect&countries=Germany&hours_old=24"
 ```
@@ -119,6 +144,7 @@ JobDrop/
 │   ├── __main__.py          # uvicorn entrypoint (port 8001)
 │   ├── wellfound_routes.py  # GET /wellfound endpoint + scraping logic
 │   ├── adzuna_routes.py     # GET /adzuna endpoint + scraping logic
+│   ├── builtin_routes.py    # GET /builtin endpoint + scraping logic
 │   ├── common.py            # JSON-safe serialization helpers
 │   └── config.py            # default positions / hours / limit
 └── requirements.txt

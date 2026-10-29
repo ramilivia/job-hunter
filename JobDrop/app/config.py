@@ -19,19 +19,19 @@ _FALLBACK_POSITIONS = [
     "Forward Deployed Engineer",
 ]
 _FALLBACK_COUNTRIES = [
-    {"name": "Netherlands", "code": "nl"},
-    {"name": "Germany", "code": "de"},
-    {"name": "Poland", "code": "pl"},
-    {"name": "Spain", "code": "es"},
-    {"name": "Portugal", "code": "pt"},
-    {"name": "Estonia", "code": "ee"},
-    {"name": "Czechia", "code": "cz"},
-    {"name": "Switzerland", "code": "ch"},
-    {"name": "Austria", "code": "at"},
-    {"name": "Norway", "code": "no"},
-    {"name": "Denmark", "code": "dk"},
-    {"name": "Sweden", "code": "se"},
-    {"name": "France", "code": "fr"},
+    {"name": "Netherlands", "code": "nl", "code_alpha3": "NLD"},
+    {"name": "Germany", "code": "de", "code_alpha3": "DEU"},
+    {"name": "Poland", "code": "pl", "code_alpha3": "POL"},
+    {"name": "Spain", "code": "es", "code_alpha3": "ESP"},
+    {"name": "Portugal", "code": "pt", "code_alpha3": "PRT"},
+    {"name": "Estonia", "code": "ee", "code_alpha3": "EST"},
+    {"name": "Czechia", "code": "cz", "code_alpha3": "CZE"},
+    {"name": "Switzerland", "code": "ch", "code_alpha3": "CHE"},
+    {"name": "Austria", "code": "at", "code_alpha3": "AUT"},
+    {"name": "Norway", "code": "no", "code_alpha3": "NOR"},
+    {"name": "Denmark", "code": "dk", "code_alpha3": "DNK"},
+    {"name": "Sweden", "code": "se", "code_alpha3": "SWE"},
+    {"name": "France", "code": "fr", "code_alpha3": "FRA"},
 ]
 
 
@@ -70,6 +70,18 @@ _countries = _CONFIG.get("countries") or _FALLBACK_COUNTRIES
 # Wellfound geocodes from a free-text location, so we pass it the country
 # name (not the ISO code). Kept in the same order as the shared file.
 DEFAULT_COUNTRY_NAMES = [c["name"] for c in _countries]
+
+# Built In (builtin.com) filters by ISO alpha-3 country code rather than the
+# alpha-2 ``code`` or the full name. Build a lookup keyed by both the free-text
+# name and the alpha-2 code so either maps to the right Built In filter value.
+COUNTRY_ALPHA3_LOOKUP: dict[str, str] = {}
+for _c in _countries:
+    _alpha3 = _c.get("code_alpha3")
+    if not _alpha3:
+        continue
+    COUNTRY_ALPHA3_LOOKUP[_c["name"].strip().lower()] = _alpha3
+    if _c.get("code"):
+        COUNTRY_ALPHA3_LOOKUP[_c["code"].strip().lower()] = _alpha3
 
 DEFAULT_HOURS = _CONFIG.get("hours_old") or 24
 DEFAULT_LIMIT = 20
