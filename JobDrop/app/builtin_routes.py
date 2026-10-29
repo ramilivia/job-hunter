@@ -46,12 +46,29 @@ def _resolve_alpha3(location: str | None) -> str | None:
     return COUNTRY_ALPHA3_LOOKUP.get(location.strip().lower())
 
 
+def _hours_to_days(hours: int) -> int:
+    """Round ``hours`` up to Built In's nearest native recency bucket (days).
+
+    Built In's frontend filters by ``daysSinceUpdated`` with the buckets
+    1, 3, 7 and 30 days. We snap the configured ``hours_old`` up to the next
+    bucket so no posting older than the threshold leaks through.
+    """
+    days = (hours + 23) // 24  # ceil(hours / 24)
+    for bucket in (1, 3, 7, 30):
+        if days <= bucket:
+            return bucket
+    return 30
+
+
 def _patched_build_search_url(self, si, page: int) -> str:
     """Replacement for BuiltIn._build_search_url that matches Built In's frontend.
 
     Uses ``country=<ISO alpha-3>`` for location filtering (the param their UI
-    emits) and the ``/jobs/remote`` path segment for the remote filter, both of
-    which jobdrop's stock builder gets wrong.
+    emits), the ``/jobs/remote`` path segment for remote, and
+    ``daysSinceUpdated`` for recency. The latter is important because jobdrop's
+    Built In parser can't read word-based "posted" labels ("Yesterday",
+    "One Month Ago"), so its client-side ``hours_old`` filter lets those jobs
+    through — Built In's own server-side date filter avoids that.
     """
     base = "https://builtin.com/jobs"
     if si.is_remote:
@@ -64,6 +81,8 @@ def _patched_build_search_url(self, si, page: int) -> str:
         params.append(f"country={alpha3}")
     elif si.location:
         params.append(f"location={quote_plus(si.location)}")
+    if si.hours_old:
+        params.append(f"daysSinceUpdated={_hours_to_days(si.hours_old)}")
     if page > 1:
         params.append(f"page={page}")
     suffix = ("?" + "&".join(params)) if params else ""
