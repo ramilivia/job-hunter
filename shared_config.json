@@ -5,19 +5,19 @@
     "Forward Deployed Engineer"
   ],
   "countries": [
-    { "name": "Netherlands", "code": "nl" },
-    { "name": "Germany", "code": "de" },
-    { "name": "Poland", "code": "pl" },
-    { "name": "Spain", "code": "es" },
-    { "name": "Portugal", "code": "pt" },
-    { "name": "Estonia", "code": "ee" },
-    { "name": "Czechia", "code": "cz" },
-    { "name": "Switzerland", "code": "ch" },
-    { "name": "Austria", "code": "at" },
-    { "name": "Norway", "code": "no" },
-    { "name": "Denmark", "code": "dk" },
-    { "name": "Sweden", "code": "se" },
-    { "name": "France", "code": "fr" }
+    { "name": "Netherlands", "code": "nl", "code_alpha3": "NLD" },
+    { "name": "Germany", "code": "de", "code_alpha3": "DEU" },
+    { "name": "Poland", "code": "pl", "code_alpha3": "POL" },
+    { "name": "Spain", "code": "es", "code_alpha3": "ESP" },
+    { "name": "Portugal", "code": "pt", "code_alpha3": "PRT" },
+    { "name": "Estonia", "code": "ee", "code_alpha3": "EST" },
+    { "name": "Czechia", "code": "cz", "code_alpha3": "CZE" },
+    { "name": "Switzerland", "code": "ch", "code_alpha3": "CHE" },
+    { "name": "Austria", "code": "at", "code_alpha3": "AUT" },
+    { "name": "Norway", "code": "no", "code_alpha3": "NOR" },
+    { "name": "Denmark", "code": "dk", "code_alpha3": "DNK" },
+    { "name": "Sweden", "code": "se", "code_alpha3": "SWE" },
+    { "name": "France", "code": "fr", "code_alpha3": "FRA" }
   ],
   "hours_old": 24
 }
